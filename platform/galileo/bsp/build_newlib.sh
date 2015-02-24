@@ -1,0 +1,98 @@
+#!/bin/bash
+
+JOBS=5
+TARGET=i586-elf
+VERSION=2.2.0-1
+
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+# This script will always run on its own basepath, no matter where you call it from.
+pushd ${SCRIPT_DIR}
+
+prepare() {
+    wget -c ftp://sources.redhat.com/pub/newlib/newlib-${VERSION}.tar.gz
+
+    # Clean up the previous source dir, if any.
+    if [[ -d ./newlib-${VERSION} ]]; then
+        rm -rf ./newlib-${VERSION}
+    fi
+
+    # Clean up the previous install dir, if any.
+    if [[ -d ./${VERSION} ]]; then
+        rm -rf ./${VERSION}
+    fi
+
+    tar xf newlib-${VERSION}.tar.gz
+    cd newlib-${VERSION}
+
+    for i in  `ls ../patches/`; do patch -p0 < ../patches/${i}; done
+}
+
+
+build() {
+    export AR_FOR_TARGET=ar
+    export AS_FOR_TARGET=as
+    export CC_FOR_TARGET=cc
+    export GCC_FOR_TARGET=gcc
+    export CXX_FOR_TARGET=c++
+    export RAW_CXX_FOR_TARGET=c++
+    export GCJ_FOR_TARGET=gcj
+    export GFORTRAN_FOR_TARGET=gfortran
+    export GOC_FOR_TARGET=gccgo
+    export DLLTOOL_FOR_TARGET=dlltool
+    export LD_FOR_TARGET=ld
+    export LIPO_FOR_TARGET=lipo
+    export NM_FOR_TARGET=nm
+    export OBJDUMP_FOR_TARGET=objdump
+    export RANLIB_FOR_TARGET=ranlib
+    export READELF_FOR_TARGET=readelf
+    export STRIP_FOR_TARGET=strip
+    export WINDRES_FOR_TARGET=windres
+    export WINDMC_FOR_TARGET=windmc
+    export COMPILER_AS_FOR_TARGET=as
+    export COMPILER_LD_FOR_TARGET=ld
+    export COMPILER_NM_FOR_TARGET=nm
+    export CFLAGS_FOR_TARGET="-g -O2 -m32 -march=i586 -mtune=i586"
+    export CXXFLAGS_FOR_TARGET="-g -O2 -m32 -march=i586 -mtune=i586"
+
+    mkdir -p install
+    ./configure --target=${TARGET} \
+        --prefix=`pwd`/install \
+        --enable-newlib-io-long-long \
+        --enable-newlib-io-float \
+        --enable-newlib-io-c99-format \
+        --disable-libstdcxx \
+        --disable-multilib \
+        --disable-newlib-mb \
+        --disable-newlib-supplied-syscalls \
+        --enable-multithread \
+        --disable-newlib-io-pos-args
+
+    make -j${JOBS} all && make install
+    cd ..
+}
+
+setup() {
+    cp -r ./newlib-${VERSION}/install/${TARGET} .
+}
+
+cleanup() {
+    rm -rf ./newlib-${VERSION}*
+}
+
+
+# By default we always call prepare, build and setup.
+prepare && build && setup
+
+# But we only cleanup if -c is used.
+case $1 in
+    -c | --cleanup)
+        cleanup
+        shift
+        ;;
+    *)
+        # unknown option
+        ;;
+esac
+
+popd
