@@ -39,5 +39,8 @@ CUSTOM_RULE_LINK = 1
 	$(Q)$(LD) $(LDFLAGS) $(TARGET_STARTFILES) ${filter-out %.a,$^} \
 	    ${filter %.a,$^} $(TARGET_LIBFILES) -o $@
 	@cp $@ $(CONTIKI_PROJECT).elf
-	@strip $@
+	@cp $@ $(CONTIKI_PROJECT).elf.stripped
+	@strip $(CONTIKI_PROJECT).elf.stripped
+	@$(OBJCOPY) -O binary $@
+	@wc -c $(CONTIKI_PROJECT).elf.stripped
 	@wc -c $@

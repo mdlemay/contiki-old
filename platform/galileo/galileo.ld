@@ -9,8 +9,12 @@ SECTIONS {
     */
     . = 1M;
 
+    _start = .;
+
     .text ALIGN (4K) :
     {
+        _multiboot_header = .;
+
         *(.multiboot)
         *(.text)
     }
@@ -25,11 +29,15 @@ SECTIONS {
         *(.data)
     }
 
+    _edata = .;
+
     .bss ALIGN (4K) :
     {
         *(COMMON)
         *(.bss)
     }
+
+    _end = .;
 
     /* Put this here so it doesn't sit above the multiboot section. */
     .note.gnu.build-id :
