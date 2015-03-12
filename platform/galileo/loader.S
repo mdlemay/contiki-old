@@ -4,23 +4,23 @@
 .set CHECKSUM, -(MAGIC_NUMBER + FLAGS)
 
 .section .multiboot
-    .align 4
-    .long MAGIC_NUMBER
-    .long FLAGS
-    .long CHECKSUM
-    # header_addr
-    .long _multiboot_header
-    # load_addr
-    .long _start
-    # load_end_addr
-    .long _edata
-    # bss_end_addr
-    .long _end
-    # entry_addr
-    .long start
+.align 4
+.long MAGIC_NUMBER
+.long FLAGS
+.long CHECKSUM
+# header_addr
+.long _multiboot_header
+# load_addr
+.long _start
+# load_end_addr
+.long _edata
+# bss_end_addr
+.long _end
+# entry_addr
+.long start
 
 .section .text
-    .extern main
-    .global start
-    start:
+.extern main
+.global start
+start:
         call main
