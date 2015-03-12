@@ -95,3 +95,10 @@ contiki-cc2530dk.lib
 
 # cscope files
 cscope.*
+
+# vim swap files
+*.swp
+*.swo
+
+# galileo bsp files
+platform/galileo/bsp/
