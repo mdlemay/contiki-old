@@ -3,18 +3,6 @@
 
 // Below there all needed syscall stubs so far needed by newlib.
 
-// FIXME: I don't think this should be needed. There is something wrong with our newlib configure.
-_fpos64_t __sseek64(struct _reent *ptr, void *t, _fpos64_t p, int s)
-{
-    return 0;
-}
-
-// FIXME: I don't think this should be needed. There is something wrong with our newlib configure.
-int __swrite64(struct _reent *ptr, void *t, const char *b, int s)
-{
-    return 0;
-}
-
 int _close_r(struct _reent *ptr, int file)
 {
     errno = ENOTSUP;
