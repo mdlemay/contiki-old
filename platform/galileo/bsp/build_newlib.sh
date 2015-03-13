@@ -52,8 +52,8 @@ build() {
     export COMPILER_AS_FOR_TARGET=as
     export COMPILER_LD_FOR_TARGET=ld
     export COMPILER_NM_FOR_TARGET=nm
-    export CFLAGS_FOR_TARGET="-g -O2 -m32 -march=i586 -mtune=i586"
-    export CXXFLAGS_FOR_TARGET="-g -O2 -m32 -march=i586 -mtune=i586"
+    export CFLAGS_FOR_TARGET="-Os -m32 -march=i586 -mtune=i586 -DPREFER_SIZE_OVER_SPEED"
+    export CXXFLAGS_FOR_TARGET="-Os -m32 -march=i586 -mtune=i586 -DPREFER_SIZE_OVER_SPEED"
 
     mkdir -p install
     ./configure --target=${TARGET} \
