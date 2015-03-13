@@ -3,6 +3,7 @@
 int
 main(void)
 {
+  printf("Starting Contiki on Galileo...\n");
   // TODO: Init all the board-related bits (bus, uart, gpio, etc) here.
 
   // NOTE: We call these functions because all other ports do.
