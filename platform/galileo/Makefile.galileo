@@ -31,3 +31,13 @@ ASFLAGS += --32 -march=i586 -mtune=i586
 ### and we get undefined references only.
 TARGET_LIBFILES = $(OBJECTDIR)/newlib-syscalls.o $(CONTIKI)/platform/galileo/bsp/i586-elf/lib/libc.a $(CONTIKI)/platform/galileo/bsp/i586-elf/lib/libm.a $(LIBGCC_PATH)/32/libgcc.a
 
+### Compilation rules
+CUSTOM_RULE_LINK = 1
+
+%.$(TARGET): %.co $(PROJECT_OBJECTFILES) $(PROJECT_LIBRARIES) contiki-$(TARGET).a
+	$(TRACE_LD)
+	$(Q)$(LD) $(LDFLAGS) $(TARGET_STARTFILES) ${filter-out %.a,$^} \
+	    ${filter %.a,$^} $(TARGET_LIBFILES) -o $@
+	@cp $@ $(CONTIKI_PROJECT).elf
+	@strip $@
+	@wc -c $@
