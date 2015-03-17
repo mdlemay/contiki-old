@@ -33,14 +33,22 @@ TARGET_LIBFILES = $(OBJECTDIR)/newlib-syscalls.o $(CONTIKI)/platform/galileo/bsp
 
 ### Compilation rules
 CUSTOM_RULE_LINK = 1
+ELF = $@.elf
+BIN = $@.bin
 
 %.$(TARGET): %.co $(PROJECT_OBJECTFILES) $(PROJECT_LIBRARIES) contiki-$(TARGET).a
 	$(TRACE_LD)
 	$(Q)$(LD) $(LDFLAGS) $(TARGET_STARTFILES) ${filter-out %.a,$^} \
-	    ${filter %.a,$^} $(TARGET_LIBFILES) -o $@
-	@cp $@ $(CONTIKI_PROJECT).elf
-	@cp $@ $(CONTIKI_PROJECT).elf.stripped
-	@strip $(CONTIKI_PROJECT).elf.stripped
-	@$(OBJCOPY) -O binary $@
-	@wc -c $(CONTIKI_PROJECT).elf.stripped
-	@wc -c $@
+	    ${filter %.a,$^} $(TARGET_LIBFILES) -o $(ELF)
+
+    # Create raw binary.
+	@$(OBJCOPY) -O binary $(ELF) $(BIN)
+
+    # Create stripped elf and a symbols-only file.
+	@$(OBJCOPY) --only-keep-debug $(ELF) $(ELF)-SYMBOLS
+	@$(OBJCOPY) --add-gnu-debuglink=$(ELF)-SYMBOLS $(ELF)
+	@$(STRIP) $(ELF)
+
+    # Print files size.
+	@wc -c $(ELF)
+	@wc -c $(BIN)
