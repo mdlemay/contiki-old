@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "contiki.h"
 
 int
