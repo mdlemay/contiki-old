@@ -42,7 +42,7 @@ int _fstat_r(struct _reent *ptr, int file, struct stat *st)
 caddr_t _sbrk_r(struct _reent *ptr,int incr)
 {
     errno = ENOTSUP;
-    return -1;
+    return NULL;
 }
 
 void _kill_r(struct _reent *ptr)
