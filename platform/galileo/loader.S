@@ -30,6 +30,7 @@
 .extern main
 .global start
 start:
+        cli
         movl $(c_stack + STACK_SIZE), %esp
         call main
 

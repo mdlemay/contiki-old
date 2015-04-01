@@ -1,5 +1,7 @@
+#include "gdt.h"
+
 void
 cpu_init(void)
 {
-  /* Stubbed function */
+ gdt_init();
 }
