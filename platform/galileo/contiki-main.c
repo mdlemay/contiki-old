@@ -1,10 +1,13 @@
 #include <stdio.h>
 
 #include "contiki.h"
+#include "cpu.h"
 
 int
 main(void)
 {
+  cpu_init();
+
   printf("Starting Contiki on Galileo...\n");
   // TODO: Init all the board-related bits (bus, uart, gpio, etc) here.
 
