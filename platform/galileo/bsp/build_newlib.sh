@@ -3,6 +3,8 @@
 JOBS=5
 TARGET=i586-elf
 VERSION=2.2.0-1
+MD5=94114fdc1d8391cdbc2653d89249cccf
+TARBALL=newlib-${VERSION}.tar.gz
 
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -10,7 +12,10 @@ SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 pushd ${SCRIPT_DIR}
 
 prepare() {
-    wget -c ftp://sources.redhat.com/pub/newlib/newlib-${VERSION}.tar.gz
+    # If the source tarball doesn't exist of its md5 checksum doesn't match, download it.
+    if [ ! -e ./${TARBALL} ] || [ "$(md5sum ./${TARBALL} | cut -d' ' -f1)" != $MD5 ]; then
+        wget -c ftp://sources.redhat.com/pub/newlib/${TARBALL}
+    fi
 
     # Clean up the previous source dir, if any.
     if [[ -d ./newlib-${VERSION} ]]; then
@@ -22,7 +27,7 @@ prepare() {
         rm -rf ./${VERSION}
     fi
 
-    tar xf newlib-${VERSION}.tar.gz
+    tar xf ${TARBALL}
     cd newlib-${VERSION}
 
     for i in  `ls ../patches/`; do patch -p0 < ../patches/${i}; done
