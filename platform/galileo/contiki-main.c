@@ -8,6 +8,7 @@ int
 main(void)
 {
   cpu_init();
+  clock_init();
 
   printf("Starting Contiki on Galileo...\n");
   // TODO: Init all the board-related bits (bus, uart, gpio, etc) here.

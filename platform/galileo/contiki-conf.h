@@ -35,6 +35,9 @@
 
 #include <inttypes.h>
 
+typedef unsigned long clock_time_t;
+#define CLOCK_CONF_SECOND 200    // 200 Hz = a period of 5ms.
+
 #define CC_CONF_REGISTER_ARGS          1
 #define CC_CONF_FUNCTION_POINTER_ARGS  1
 #define CC_CONF_FASTCALL
@@ -161,10 +164,6 @@ typedef unsigned short uip_stats_t;
 #define CH_CURS_LEFT	          -2
 #define CH_CURS_RIGHT	          -3
 #define CH_CURS_DOWN	          -4
-
-typedef unsigned long clock_time_t;
-
-#define CLOCK_CONF_SECOND 1000
 
 #define LOG_CONF_ENABLED 1
 
