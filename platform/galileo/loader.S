@@ -35,6 +35,4 @@ start:
         call main
 
         /* We're not expected to return from main(). But if we do we halt */
-        cli
-halt:   hlt
-        jmp halt
+        call halt
