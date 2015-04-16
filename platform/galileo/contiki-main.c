@@ -2,6 +2,7 @@
 
 #include "contiki.h"
 #include "cpu.h"
+#include "interrupt.h"
 
 int
 main(void)
@@ -18,12 +19,20 @@ main(void)
   ctimer_init();
   rtimer_init();
 
+  ENABLE_IRQ();
+
   // This is necessary to load the main processes.
   autostart_start(autostart_processes);
 
   while(1) {
-    // MAIN LOOP !!
-    // here we should iterate through the running processes/jobs
+    /* Call run_process() how many time it is needed until there is no
+     * pending events.
+     * */
+    while(process_run());
+
+    /* XXX: We might want to set a power save mode here since there is no
+     * events to be processed anymore.
+     */
   }
 
   return 0;
