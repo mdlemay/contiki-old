@@ -102,3 +102,6 @@ cscope.*
 
 # galileo bsp files
 platform/galileo/bsp/
+
+# galileo build artefacts
+*.elf.full

@@ -44,9 +44,8 @@ BIN = $@.bin
     # Create raw binary.
 	@$(OBJCOPY) -O binary $(ELF) $(BIN)
 
-    # Create stripped elf and a symbols-only file.
-	@$(OBJCOPY) --only-keep-debug $(ELF) $(ELF)-SYMBOLS
-	@$(OBJCOPY) --add-gnu-debuglink=$(ELF)-SYMBOLS $(ELF)
+    # Create stripped elf
+	@cp $(ELF) $(ELF).full
 	@$(STRIP) $(ELF)
 
     # Print files size.
