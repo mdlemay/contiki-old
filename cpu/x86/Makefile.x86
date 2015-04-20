@@ -1,4 +1,4 @@
-CONTIKI_CPU_DIRS = .
+CONTIKI_CPU_DIRS = . drivers
 
 CONTIKI_SOURCEFILES += cpu.c gdt.c mtarch.c helpers.S idt.c
 
