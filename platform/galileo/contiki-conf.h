@@ -38,6 +38,10 @@
 typedef unsigned long clock_time_t;
 #define CLOCK_CONF_SECOND 128
 
+typedef uint64_t rtimer_clock_t;
+#define RTIMER_ARCH_SECOND 1024
+#define RTIMER_CLOCK_LT(a,b)     ((int64_t)((a)-(b)) < 0)
+
 #define CC_CONF_REGISTER_ARGS          1
 #define CC_CONF_FUNCTION_POINTER_ARGS  1
 #define CC_CONF_FASTCALL

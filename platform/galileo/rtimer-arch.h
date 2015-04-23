@@ -40,8 +40,6 @@
 #ifndef RTIMER_ARCH_H_
 #define RTIMER_ARCH_H_
 
-#include "contiki-conf.h"
-
-#define RTIMER_ARCH_SECOND CLOCK_CONF_SECOND
+rtimer_clock_t rtimer_arch_now();
 
 #endif /* RTIMER_ARCH_H_ */
