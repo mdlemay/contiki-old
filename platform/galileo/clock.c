@@ -16,10 +16,10 @@ update_ticks(void)
 {
   ++tick_count;
 
-  // The etimer might have expired now that the system clock was updated.
-  if(etimer_pending()) {
+  /* Notify etimer library if time has expired */
+  clock_time_t expire_time = etimer_next_expiration_time();
+  if(expire_time != 0 && tick_count >= expire_time)
     etimer_request_poll();
-  }
 }
 
 void
