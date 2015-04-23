@@ -5,13 +5,14 @@
 #include "sys/etimer.h"
 
 #include "contiki-conf.h"
-#include "drivers/pit.h"
+#include "drivers/rtc.h"
 #include "helpers.h"
 
 
 static volatile clock_time_t tick_count = 0;
 
-void timer_callback(void)
+static void
+update_ticks(void)
 {
   ++tick_count;
 
@@ -24,7 +25,7 @@ void timer_callback(void)
 void
 clock_init(void)
 {
-  pit_init(CLOCK_CONF_SECOND, timer_callback);
+  rtc_init(CLOCK_CONF_SECOND, update_ticks);
 }
 
 clock_time_t
