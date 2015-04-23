@@ -2,6 +2,7 @@
 
 #include "helpers.h"
 #include "interrupt.h"
+#include "drivers/pic.h"
 
 #define RTC_INDEX_REGISTER   0x70
 #define RTC_TARGET_REGISTER  0x71
@@ -60,6 +61,5 @@ rtc_init(unsigned int frequency, void(*callback)(void))
   outb(RTC_INDEX_REGISTER, 0x0B);
   outb(RTC_TARGET_REGISTER, reg_b | BIT(6));
 
-  /* Unmask IRQ8 */
-  outb(0xA1, 0xFE);
+  pic_unmask_irq(8);
 }

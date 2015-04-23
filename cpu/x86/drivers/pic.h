@@ -8,6 +8,7 @@
 #define PIC2_CMD_PORT   0xA0
 #define PIC2_DATA_PORT  0xA1
 
+void pic_unmask_irq(unsigned int num);
 
 /* This function initializes the daisy-chained Master and Slave 8259 PICs.
  * It is only called once, so let's give the compiler the option to inline it.
