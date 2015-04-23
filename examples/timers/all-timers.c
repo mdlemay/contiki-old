@@ -4,18 +4,23 @@
 #include "sys/etimer.h"
 #include "sys/stimer.h"
 #include "sys/timer.h"
+#include "sys/rtimer.h"
 
 PROCESS(process1, "ETimer x Timer x STimer Process");
 PROCESS(process2, "CTimer Process 2");
-AUTOSTART_PROCESSES(&process1, &process2);
+PROCESS(process3, "RTimer Process 3");
+AUTOSTART_PROCESSES(&process1, &process2, &process3);
 
 static int counter_etimer;
 static int counter_timer;
 static int counter_stimer;
 static int counter_ctimer;
+static int counter_rtimer;
 static struct timer timer_timer;
 static struct stimer timer_stimer;
 static struct ctimer timer_ctimer;
+static struct rtimer timer_rtimer;
+static rtimer_clock_t timeout_rtimer = RTIMER_SECOND/2;
 
 void do_timeout1()
 {
@@ -69,4 +74,25 @@ PROCESS_THREAD(process2, ev, data)
     PROCESS_END();
 }
 
+void do_timeout3(struct rtimer *timer, void *ptr)
+{
+  counter_rtimer++;
+
+  /* Re-arm rtimer */
+  rtimer_set(&timer_rtimer, RTIMER_NOW() + timeout_rtimer, 0, do_timeout3,
+                                                                      NULL);
+}
+
+PROCESS_THREAD(process3, ev, data)
+{
+    PROCESS_BEGIN();
+
+    while (1) {
+      rtimer_set(&timer_rtimer, RTIMER_NOW() + timeout_rtimer, 0,
+                                                          do_timeout3, NULL);
+      PROCESS_YIELD();
+    }
+
+    PROCESS_END();
+}
 
