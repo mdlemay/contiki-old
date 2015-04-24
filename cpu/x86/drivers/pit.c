@@ -10,8 +10,24 @@
 #define PIT_CLOCK_FREQUENCY 1193182
 
 
-void pit_init(uint32_t ticks_rate)
+static pit_int_callback interrupt_cb;
+
+static void __attribute__((__used__)) pit_int_handler(void)
 {
+  interrupt_cb();
+
+  // FIXME: Add a pic_send_eoi() API or similar and call it here.
+  outb(0x20, 0x20); /* master PIC */
+}
+
+void
+pit_init(uint32_t ticks_rate, pit_int_callback cb)
+{
+  // FIXME: Call some PIC API to get the current offset and then add to its default IRQ number (0).
+  SET_INTERRUPT_HANDLER(32, 0, pit_int_handler);
+
+  interrupt_cb = cb;
+
   // Calculate the 16bit divisor that can provide the chosen clock tick rate
   // (CLOCK_CONF_SECOND in contiki-conf.h). For reference --> tick rate = clock frequency / divisor.
   // If we provide an odd divisor to the Square Wave generator (Mode 3) of
@@ -27,5 +43,8 @@ void pit_init(uint32_t ticks_rate)
 
   outb(PIT_COUNTER0_PORT, divisor & 0xFF); // Write least significant bytes first.
   outb(PIT_COUNTER0_PORT, (divisor >> 8) & 0xFF);
+
+  // FIXME: Unmask IRQ0 from Master PIC. Add a pic_set_mask() or similar and call it here.
+  outb(0x21, 0xfa);
 }
 

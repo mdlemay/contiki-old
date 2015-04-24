@@ -2,36 +2,49 @@
 #include <math.h>
 
 #include "sys/clock.h"
+#include "sys/etimer.h"
 
 #include "contiki-conf.h"
 #include "drivers/pit.h"
 #include "helpers.h"
 
+
+static volatile clock_time_t tick_count = 0;
+
+void timer_callback(void)
+{
+  ++tick_count;
+
+  // The etimer might have expired now that the system clock was updated.
+  if(etimer_pending()) {
+    etimer_request_poll();
+  }
+}
+
 void
 clock_init(void)
 {
-  pit_init(CLOCK_CONF_SECOND);
+  pit_init(CLOCK_CONF_SECOND, timer_callback);
 }
 
 clock_time_t
 clock_time(void)
 {
-  // TODO: Return # of clock ticks since boot, whereas clock ticks rate is
-  // defined by CLOCK_CONF_SECOND.
-  return (clock_time_t) NULL;
+  return tick_count;
 }
 
 unsigned long
 clock_seconds(void)
 {
-  // TODO: Return # of seconds since boot.
-  return 0;
+  return tick_count / CLOCK_CONF_SECOND;
 }
 
 void
 clock_wait(clock_time_t t)
 {
-  // TODO: Wait for t ticks.
+  clock_time_t initial = clock_time();
+
+  while(clock_time() < t + initial);
 }
 
 void
