@@ -11,7 +11,7 @@
 
 void (*user_callback)(void);
 
-static void __attribute__((__used__))
+static void
 rtc_handler()
 {
   user_callback();

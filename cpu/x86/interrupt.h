@@ -47,12 +47,13 @@ struct interrupt_context {
         ".align 4\n\t"                                           \
         "isr" #num ":\n\t"                                       \
         "         pushal\n\t"                                    \
-        "         call " #handler "\n\t"                         \
+        "         call %P0\n\t"                                   \
         "         popal\n\t"                                     \
         "         .if " #has_error_code "\n\t"                   \
-        "         add $4, %esp\n\t"                              \
+        "         add $4, %%esp\n\t"                             \
         "         .endif\n\t"                                    \
         "         iret\n\t"                                      \
+        :: "i" (handler)                                         \
       );                                                         \
    }                                                             \
                                                                  \

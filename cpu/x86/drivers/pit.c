@@ -16,7 +16,8 @@
 
 static pit_int_callback interrupt_cb;
 
-static void __attribute__((__used__)) pit_int_handler(void)
+static void
+pit_int_handler(void)
 {
   interrupt_cb();
 

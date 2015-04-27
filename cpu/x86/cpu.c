@@ -7,12 +7,14 @@
 #define IRQ7_INT  PIC_INT(7)
 
 
-void double_fault_handler(struct interrupt_context context)
+static void
+double_fault_handler(struct interrupt_context context)
 {
   halt();
 }
 
-static void __attribute__((__used__)) spurious_irq7_handler(void)
+static void
+spurious_irq7_handler(void)
 {
   /*
    * NOTE: Originally IRQ7 was used for the parallel port interrupts. Nowadays,
