@@ -1,5 +1,5 @@
 #include "contiki-conf.h"
-#include "drivers/pit.h"
+#include "drivers/legacy_pc/pit.h"
 #include "sys/rtimer.h"
 
 static volatile rtimer_clock_t tick_count = 0;

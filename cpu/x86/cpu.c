@@ -1,8 +1,8 @@
+#include "drivers/legacy_pc/pic.h"
 #include "gdt.h"
 #include "helpers.h"
 #include "idt.h"
 #include "interrupt.h"
-#include "pic.h"
 
 #define IRQ7_INT  PIC_INT(7)
 

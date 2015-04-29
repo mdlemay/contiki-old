@@ -2,7 +2,7 @@
 
 #include "helpers.h"
 #include "interrupt.h"
-#include "drivers/pic.h"
+#include "pic.h"
 
 #define RTC_INDEX_REGISTER   0x70
 #define RTC_TARGET_REGISTER  0x71
@@ -26,7 +26,7 @@ rtc_handler()
   /* Issue the End of Interrupt to PIC */
   pic_eoi(RTC_IRQ);
 }
-
+/*---------------------------------------------------------------------------*/
 /* Initialize the Real Time Clock.
  * @frequency: Number of ticks per second. RTC has very specific values
  *             for frequency. They are: 2, 4, 8, 16, 32, 64, 128, 256, 512,
@@ -36,7 +36,7 @@ rtc_handler()
  *             It is executed in interrupt context.
  */
 void
-rtc_init(unsigned int frequency, void(*callback)(void))
+rtc_init(unsigned int frequency, void (*callback)(void))
 {
   uint8_t rate_select = log2(32768 / frequency) + 1;
   uint8_t reg_a, reg_b;

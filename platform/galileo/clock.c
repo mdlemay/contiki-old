@@ -5,7 +5,7 @@
 #include "sys/etimer.h"
 
 #include "contiki-conf.h"
-#include "drivers/rtc.h"
+#include "drivers/legacy_pc/rtc.h"
 #include "helpers.h"
 
 
