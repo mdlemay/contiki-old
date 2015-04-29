@@ -1,6 +1,6 @@
-CONTIKI_CPU_DIRS = . drivers/legacy_pc/ core/sys/
+CONTIKI_CPU_DIRS += .
 
-CONTIKI_SOURCEFILES += cpu.c gdt.c helpers.S idt.c pit.c rtc.c pic.c
+CONTIKI_SOURCEFILES += cpu.c gdt.c helpers.S idt.c
 
 ### Compiler definitions
 CC       = gcc
