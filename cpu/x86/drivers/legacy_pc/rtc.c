@@ -2,6 +2,7 @@
 
 #include "helpers.h"
 #include "interrupt.h"
+#include "nmi.h"
 #include "pic.h"
 
 #define RTC_INDEX_REGISTER   0x70
@@ -45,19 +46,23 @@ rtc_init(unsigned int frequency, void (*callback)(void))
 
   SET_INTERRUPT_HANDLER(RTC_INT, 0, rtc_handler);
 
+  nmi_disable();
+
   /* Select interrupt period to 7.8125 ms */
-  outb(RTC_INDEX_REGISTER, 0x0A);
+  outb(RTC_INDEX_REGISTER, 0x8A);
   reg_a = inb(RTC_TARGET_REGISTER);
   reg_a &= 0xF0;
   reg_a |= rate_select;
-  outb(RTC_INDEX_REGISTER, 0x0A);
+  outb(RTC_INDEX_REGISTER, 0x8A);
   outb(RTC_TARGET_REGISTER, reg_a);
 
   /* Enable periodic interrupt */
-  outb(RTC_INDEX_REGISTER, 0x0B);
+  outb(RTC_INDEX_REGISTER, 0x8B);
   reg_b = inb(RTC_TARGET_REGISTER);
-  outb(RTC_INDEX_REGISTER, 0x0B);
+  outb(RTC_INDEX_REGISTER, 0x8B);
   outb(RTC_TARGET_REGISTER, reg_b | BIT(6));
+
+  nmi_enable();
 
   pic_unmask_irq(RTC_IRQ);
 }
