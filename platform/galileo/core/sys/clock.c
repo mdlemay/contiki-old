@@ -6,7 +6,6 @@
 
 #include "contiki-conf.h"
 #include "drivers/legacy_pc/rtc.h"
-#include "helpers.h"
 
 static volatile clock_time_t tick_count = 0;
 

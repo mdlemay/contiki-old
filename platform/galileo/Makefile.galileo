@@ -1,27 +1,16 @@
-ifndef CONTIKI
-  $(error CONTIKI not defined! You must specify where CONTIKI resides!)
-endif
-
 CONTIKI_TARGET_DIRS = . core/sys/
 CONTIKI_TARGET_MAIN = ${addprefix $(OBJECTDIR)/,contiki-main.o}
 
-CONTIKI_TARGET_SOURCEFILES = contiki-main.c rtimer-arch.c clock.c newlib-syscalls.c
-
-CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
-
-.SUFFIXES:
+CONTIKI_SOURCEFILES += contiki-main.c rtimer-arch.c clock.c newlib-syscalls.c
 
 ### Define the CPU directory
 CONTIKI_CPU=$(CONTIKI)/cpu/x86
 include $(CONTIKI)/cpu/x86/Makefile.x86_quarkX1000
 
-
 LIBGCC_PATH = /usr/lib/gcc/$(shell gcc -dumpmachine)/$(shell gcc -dumpversion)
 
 CFLAGS += -m32 -march=i586 -nostdinc -isystem $(CONTIKI)/platform/galileo/bsp/i586-elf/include -isystem $(LIBGCC_PATH)/include -isystem $(LIBGCC_PATH)/include-fixed
-
 LDFLAGS += -m32 -nostdlib -T $(LINKERSCRIPT)
-
 ASFLAGS += --32 -march=i586 -mtune=i586
 
 ### Ideally, this should be part of LDFLAGS (-lc -lm etc). However, we found out that archive
