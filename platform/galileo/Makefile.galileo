@@ -5,11 +5,9 @@ endif
 CONTIKI_TARGET_DIRS = . core/sys/
 CONTIKI_TARGET_MAIN = ${addprefix $(OBJECTDIR)/,contiki-main.o}
 
-CONTIKI_TARGET_SOURCEFILES = contiki-main.c rtimer-arch.c clock.c newlib-syscalls.c loader.S
+CONTIKI_TARGET_SOURCEFILES = contiki-main.c rtimer-arch.c clock.c newlib-syscalls.c
 
 CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
-
-LINKERSCRIPT = $(CONTIKI)/platform/galileo/galileo.ld
 
 .SUFFIXES:
 
