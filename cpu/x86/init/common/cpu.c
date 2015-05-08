@@ -6,13 +6,12 @@
 
 #define IRQ7_INT  PIC_INT(7)
 
-
 static void
 double_fault_handler(struct interrupt_context context)
 {
   halt();
 }
-
+/*---------------------------------------------------------------------------*/
 static void
 spurious_irq7_handler(void)
 {
@@ -26,7 +25,7 @@ spurious_irq7_handler(void)
    * doesn't trigger the next queued interrupt.
    */
 }
-
+/*---------------------------------------------------------------------------*/
 void
 cpu_init(void)
 {

@@ -12,21 +12,20 @@
 #define SEG_LONG(x)      ((x) << 0x0D) /* Long mode */
 #define SEG_SIZE(x)      ((x) << 0x0E) /* Size (0 for 16-bit, 1 for 32) */
 #define SEG_GRAN(x)      ((x) << 0x0F) /* Granularity (0 for 1B - 1MB, 1 for 4KB - 4GB) */
-#define SEG_PRIV(x)      (((x) &  0x03) << 0x05) /* Set privilege level (0 - 3) */
+#define SEG_PRIV(x)      (((x) & 0x03) << 0x05)  /* Set privilege level (0 - 3) */
 
 #define SEG_DATA_RDWR    0x02 /* Read/Write */
 #define SEG_CODE_EXRD    0x0A /* Execute/Read */
 
 #define GDT_CODE_PL0 SEG_DESCTYPE(1) | SEG_PRES(1) | SEG_SAVL(0) | \
-                     SEG_LONG(0)     | SEG_SIZE(1) | SEG_GRAN(1) | \
-                     SEG_PRIV(0)     | SEG_CODE_EXRD
+  SEG_LONG(0) | SEG_SIZE(1) | SEG_GRAN(1) | \
+  SEG_PRIV(0) | SEG_CODE_EXRD
 
 #define GDT_DATA_PL0 SEG_DESCTYPE(1) | SEG_PRES(1) | SEG_SAVL(0) | \
-                     SEG_LONG(0)     | SEG_SIZE(1) | SEG_GRAN(1) | \
-                     SEG_PRIV(0)     | SEG_DATA_RDWR
+  SEG_LONG(0) | SEG_SIZE(1) | SEG_GRAN(1) | \
+  SEG_PRIV(0) | SEG_DATA_RDWR
 
-typedef struct gdtr
-{
+typedef struct gdtr {
   uint16_t limit;
   uint32_t base;
 } __attribute__((packed)) gdtr_t;
@@ -37,34 +36,34 @@ typedef uint64_t segment_desc_t;
  * the GDT should be aligned on an eight-byte boundary to yield the best
  * processor performance.
  */
-static segment_desc_t gdt[NUM_DESC] __attribute__ ((aligned (8)));
+static segment_desc_t gdt[NUM_DESC] __attribute__ ((aligned(8)));
 
 static void
 set_descriptor(unsigned int index, uint32_t base, uint32_t limit, uint16_t flag)
 {
   segment_desc_t descriptor;
 
-  if (index >= NUM_DESC)
+  if(index >= NUM_DESC) {
     return;
+  }
 
   /* Create the high 32 bit segment */
-  descriptor  =  limit       & 0x000F0000; /* set limit bits 19:16 */
-  descriptor |= (flag <<  8) & 0x00F0FF00; /* set type, p, dpl, s, g, d/b, l and avl fields */
+  descriptor = limit & 0x000F0000;         /* set limit bits 19:16 */
+  descriptor |= (flag << 8) & 0x00F0FF00;  /* set type, p, dpl, s, g, d/b, l and avl fields */
   descriptor |= (base >> 16) & 0x000000FF; /* set base bits 23:16 */
-  descriptor |=  base        & 0xFF000000; /* set base bits 31:24 */
+  descriptor |= base & 0xFF000000;         /* set base bits 31:24 */
 
   /* Shift by 32 to allow for low part of segment */
   descriptor <<= 32;
 
   /* Create the low 32 bit segment */
-  descriptor |= base  << 16; /* set base bits 15:0 */
-  descriptor |= limit  & 0x0000FFFF; /* set limit bits 15:0 */
+  descriptor |= base << 16;  /* set base bits 15:0 */
+  descriptor |= limit & 0x0000FFFF;  /* set limit bits 15:0 */
 
   /* Save descriptor into gdt */
   gdt[index] = descriptor;
 }
-
-
+/*---------------------------------------------------------------------------*/
 /* This function initializes the Global Offset Table. For simplicity, the
  * memory is organized following the flat model. Thus, memory appears to
  * Contiki as a single continuous address space. Code, data, and stack
@@ -77,7 +76,7 @@ gdt_init(void)
 
   /* Initialize gdtr structure */
   gdtr.limit = sizeof(segment_desc_t) * NUM_DESC - 1;
-  gdtr.base = (uint32_t) &gdt;
+  gdtr.base = (uint32_t)&gdt;
 
   /* Initialize descriptors */
   set_descriptor(0, 0, 0, 0);
@@ -91,16 +90,16 @@ gdt_init(void)
    * loadded with 0x10 while CS with 0x08. CS register cannot be changed
    * directly. For that reason, we do a far jump.
    */
-  __asm__ ("lgdt %0\n\t"
-           "jmp $0x08, $1f\n\t"
-           "1:\n\t"
-           "mov $0x10, %%ax\n\t"
-           "mov %%ax, %%ds\n\t"
-           "mov %%ax, %%ss\n\t"
-           "mov %%ax, %%es\n\t"
-           "mov %%ax, %%fs\n\t"
-           "mov %%ax, %%gs\n\t"
-      :
-      : "m" (gdtr)
-  );
+  __asm__("lgdt %0\n\t"
+          "jmp $0x08, $1f\n\t"
+          "1:\n\t"
+          "mov $0x10, %%ax\n\t"
+          "mov %%ax, %%ds\n\t"
+          "mov %%ax, %%ss\n\t"
+          "mov %%ax, %%es\n\t"
+          "mov %%ax, %%fs\n\t"
+          "mov %%ax, %%gs\n\t"
+          :
+          : "m" (gdtr)
+          );
 }
