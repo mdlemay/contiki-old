@@ -3,4 +3,4 @@
 
 void irq_init(void);
 
-#endif
+#endif /* IRQ_H */

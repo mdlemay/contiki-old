@@ -12,4 +12,4 @@ typedef void (*pit_int_callback)(void);
  */
 void pit_init(uint32_t ticks_rate, pit_int_callback c);
 
-#endif
+#endif /* PIT_H */

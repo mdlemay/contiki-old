@@ -30,4 +30,4 @@ void pic_init(void);
  */
 void pic_eoi(unsigned int irq);
 
-#endif
+#endif /* PIC_H */

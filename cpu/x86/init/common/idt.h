@@ -6,4 +6,4 @@
 void idt_init(void);
 void idt_set_intr_gate_desc(int intr_num, uint32_t offset);
 
-#endif
+#endif /* IDT_H */
