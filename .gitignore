@@ -101,7 +101,8 @@ cscope.*
 *.swo
 
 # galileo bsp files
-platform/galileo/bsp/
+platform/galileo/bsp/libc/i586-elf/
+platform/galileo/bsp/libc/newlib-2.2.0-1*
 
 # galileo build artefacts
 *.elf.full
