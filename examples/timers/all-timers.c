@@ -78,6 +78,8 @@ void do_timeout3(struct rtimer *timer, void *ptr)
 {
   counter_rtimer++;
 
+  printf("\nProcess 3: RTimer callback called");
+
   /* Re-arm rtimer */
   rtimer_set(&timer_rtimer, RTIMER_NOW() + timeout_rtimer, 0, do_timeout3,
                                                                       NULL);
