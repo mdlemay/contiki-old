@@ -37,40 +37,44 @@ struct interrupt_context {
  * interrupt.
  *
  * [1] http://wiki.osdev.org/Interrupt_Service_Routines
+ *
+ * XXX: If you are debugging at assembly level, make sure you don't be misled
+ * by the "trampolineXX" symbol name. The suffix number is NOT related to the
+ * interrupt number at all. The suffix number is a unique random number to
+ * guarantee there is no symbol name clashing.
  */
 #define SET_INTERRUPT_HANDLER(num, has_error_code, handler)      \
   do {                                                           \
-    void __attribute__((__used__)) _dummy##num(void)             \
-    {                                                            \
-      __asm__ __volatile__ (                                     \
-        ".global isr" #num "\n\t"                                \
-        ".align 4\n\t"                                           \
-        "isr" #num ":\n\t"                                       \
-        "         pushal\n\t"                                    \
-        "         call %P0\n\t"                                   \
-        "         popal\n\t"                                     \
-        "         .if " #has_error_code "\n\t"                   \
-        "         add $4, %%esp\n\t"                             \
-        "         .endif\n\t"                                    \
-        "         iret\n\t"                                      \
-        :: "i" (handler)                                         \
-      );                                                         \
-   }                                                             \
-                                                                 \
-   void isr##num(void);                                          \
-   idt_set_intr_gate_desc(num, (uint32_t) isr##num);             \
-  } while (0)                                                    \
+    __asm__ __volatile__ (                                       \
+      "push $trampoline%=\n\t"                                   \
+      "push %0\n\t"                                              \
+      "call %P1\n\t"                                             \
+      "add $8, %%esp\n\t"                                        \
+      "jmp skip_trampoline%=\n\t"                                \
+      ".align 4\n\t"                                             \
+      "trampoline%=:\n\t"                                        \
+      "         pushal\n\t"                                      \
+      "         call %P2\n\t"                                    \
+      "         popal\n\t"                                       \
+      "         .if " #has_error_code "\n\t"                     \
+      "         add $4, %%esp\n\t"                               \
+      "         .endif\n\t"                                      \
+      "         iret\n\t"                                        \
+      "skip_trampoline%=:\n\t"                                   \
+      :: "g" (num), "i" (idt_set_intr_gate_desc), "i" (handler)  \
+    );                                                           \
+  } while (0)
 
 /* Disable maskable hardware interrupts */
 #define DISABLE_IRQ()                                            \
   do {                                                           \
     __asm__ ("cli");                                             \
-  } while (0)                                                    \
+  } while (0)
 
 /* Enable maskable hardware interrupts */
 #define ENABLE_IRQ()                                             \
   do {                                                           \
     __asm__ ("sti");                                             \
-  } while (0)                                                    \
+  } while (0)
 
 #endif /* INTERRUPT_H */
