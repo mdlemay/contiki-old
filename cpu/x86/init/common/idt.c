@@ -20,7 +20,11 @@ typedef struct intr_gate_desc {
   uint16_t offset_high;
 } __attribute__((packed)) intr_gate_desc_t;
 
-static intr_gate_desc_t idt[NUM_DESC];
+/* According to Intel Combined Manual, Vol. 3, Section 6.10, the base addresses
+ * of the IDT should be aligned on an 8-byte boundary to maximize performance
+ * of cache line fills.
+ */
+static intr_gate_desc_t idt[NUM_DESC] __attribute__ ((aligned(8)));
 
 void
 idt_set_intr_gate_desc(int intr_num, uint32_t offset)
