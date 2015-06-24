@@ -30,13 +30,16 @@ BIN = $@.bin
 	$(Q)$(LD) $(LDFLAGS) $(TARGET_STARTFILES) ${filter-out %.a,$^} \
 	    ${filter %.a,$^} $(TARGET_LIBFILES) -o $(ELF)
 
-    # Create raw binary.
+  # Create raw binary.
 	@$(OBJCOPY) -O binary $(ELF) $(BIN)
 
-    # Create stripped elf
+  # Create stripped elf
 	@cp $(ELF) $(ELF).full
 	@$(STRIP) $(ELF)
 
-    # Print files size.
+  # Print elf sections size.
+	@$(SIZE) $(ELF)
+
+  # Print files size.
 	@wc -c $(ELF)
 	@wc -c $(BIN)

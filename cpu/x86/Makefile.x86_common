@@ -8,6 +8,7 @@ LD       = gcc
 AS       = as
 OBJCOPY  = objcopy
 STRIP    = strip
+SIZE     = size
 CFLAGSNO = -Wall -g -I/usr/local/include
 CFLAGS  += $(CFLAGSNO)
 ifeq ($(HOST_OS),Linux)
