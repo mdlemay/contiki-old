@@ -62,18 +62,34 @@ pci_config_read(pci_config_addr_t addr)
 }
 /*---------------------------------------------------------------------------*/
 /**
+ * \brief      Write to the PCI configuration data port.
+ * \param data Value to write.
+ */
+void
+pci_config_write(pci_config_addr_t addr, uint32_t data)
+{
+  set_addr(addr);
+
+  outl(PCI_CONFIG_DATA_PORT, data);
+}
+/*---------------------------------------------------------------------------*/
+/**
  * \brief          Initialize a structure for a PCI device driver that performs
  *                 MMIO to address range 0.  Assumes that device has already
  *                 been configured with an MMIO address range 0, e.g. by
  *                 firmware.
  * \param c_this   Structure that will be initialized to represent the driver.
  * \param pci_addr PCI base address of device.
+ * \param meta     Base address of optional driver-defined metadata.
  */
 void
-pci_init_bar0(pci_driver_t *c_this, pci_config_addr_t pci_addr)
+pci_init_bar0(pci_driver_t *c_this,
+              pci_config_addr_t pci_addr,
+              uintptr_t meta)
 {
   pci_addr.reg_off = PCI_CONFIG_REG_BAR0;
   /* The BAR0 value is masked to clear non-address bits. */
   c_this->mmio = pci_config_read(pci_addr) & ~0xFFF;
+  c_this->meta = meta;
 }
 /*---------------------------------------------------------------------------*/
