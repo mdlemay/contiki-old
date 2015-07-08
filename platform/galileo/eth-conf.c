@@ -28,45 +28,50 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
-
-#include "contiki.h"
+#include "eth.h"
+#include "ethernet-drv.h"
 #include "contiki-net.h"
-#include "cpu.h"
-#include "interrupt.h"
-#include "uart.h"
-#include "eth-conf.h"
 
-PROCINIT(  &etimer_process
-         , &tcpip_process
-#if WITH_DNS
-         , &resolv_process
-#endif
-         );
+static quarkX1000_eth_driver_t driver;
+static quarkX1000_eth_meta_t meta;
 
-int
-main(void)
+#define SUBNET_IP       192, 168, 0
+#define NETMASK_IP      255, 255, 255, 0
+#define HOST_IP         SUBNET_IP, 128
+#define GATEWAY_IP      SUBNET_IP, 1
+#define NAMESERVER_IP   GATEWAY_IP
+
+void
+eth_init(void)
 {
-  cpu_init();
-  /* Initialize UART connected to Galileo Gen2 FTDI header */
-  quarkX1000_uart_init(QUARK_X1000_UART_1);
-  clock_init();
-  rtimer_init();
+  uip_ipaddr_t ip_addr;
+  pci_config_addr_t pci_addr;
 
-  printf("Starting Contiki\n");
+#define SET_IP_ADDR(x) \
+  uip_ipaddr(&ip_addr, x)
 
-  ENABLE_IRQ();
+  SET_IP_ADDR(HOST_IP);
+  uip_sethostaddr(&ip_addr);
 
-  process_init();
-  procinit_init();
-  ctimer_init();
-  autostart_start(autostart_processes);
+  SET_IP_ADDR(NETMASK_IP);
+  uip_setnetmask(&ip_addr);
 
-  eth_init();
+  SET_IP_ADDR(GATEWAY_IP);
+  uip_setdraddr(&ip_addr);
 
-  while(1) {
-    process_run();
-  }
+#if WITH_DNS
+  SET_IP_ADDR(NAMESERVER_IP);
+  uip_nameserver_update(&ip_addr, UIP_NAMESERVER_INFINITE_LIFETIME);
+#endif
 
-  return 0;
+  pci_addr.raw = 0;
+
+  /* PCI address from section 15.4 of Intel Quark SoC X1000 Datasheet. */
+
+  pci_addr.dev = 20;
+  pci_addr.func = 6;
+
+  quarkX1000_eth_init(&driver, &meta, pci_addr);
+
+  process_start(&ethernet_process, &driver);
 }
