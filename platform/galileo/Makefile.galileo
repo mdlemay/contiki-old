@@ -17,6 +17,12 @@ include $(CONTIKI)/cpu/x86/Makefile.x86_quarkX1000
 # tables saves space and has not caused any readily-apparent functional
 # changes.
 #
+# Furthermore, the .eh_frame and .eh_frame_hdr sections that are otherwise
+# generated are treated as code sections by the UEFI GenFw program, since they
+# are read-only alloc sections.  They get grouped with the actual code
+# sections, ahead of the data sections.  This perturbs symbols and complicates
+# debugging.
+#
 # Synchronize the unwind table options here with the CFLAGS and CXXFLAGS in
 # ./bsp/libc/build_newlib.sh.
 CFLAGS += -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdinc -I$(LIBC)/include -isystem $(LIBGCC_PATH)/include -isystem $(LIBGCC_PATH)/include-fixed
