@@ -7,6 +7,15 @@ debug: $(CONTIKI_PROJECT).$(TARGET)
 	@openocd -s $(OPENOCD_SCRIPTS) -f debug.cfg &> $(shell pwd)/LOG_OPENOCD &
 	@$(GDB) $< -ex "target remote :3333"
 
+# Filter out the non-halting core assert implementation so that the halting
+# implementation from the x86 port is used instead.
+CONTIKI_GALILEO_OBJECTFILES = $(filter-out %/assert.o,$(CONTIKI_OBJECTFILES))
+
+CUSTOM_RULE_ALLOBJS_TO_TARGETLIB=1
+contiki-$(TARGET).a: $(CONTIKI_GALILEO_OBJECTFILES)
+	$(TRACE_AR)
+	$(Q)$(AR) $(AROPTS) $@ $^
+
 CUSTOM_RULE_LINK=1
 %.$(TARGET): %.co $(PROJECT_OBJECTFILES) $(PROJECT_LIBRARIES) contiki-$(TARGET).a
 	$(TRACE_LD)
