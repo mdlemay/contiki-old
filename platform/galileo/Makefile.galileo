@@ -12,7 +12,14 @@ PROJECT_SOURCEFILES += newlib-syscalls.c
 CONTIKI_CPU=$(CONTIKI)/cpu/x86
 include $(CONTIKI)/cpu/x86/Makefile.x86_quarkX1000
 
-CFLAGS += -fno-stack-protector -nostdinc -I$(LIBC)/include -isystem $(LIBGCC_PATH)/include -isystem $(LIBGCC_PATH)/include-fixed
+# Omit exception handling unwind tables (see
+# http://wiki.dwarfstd.org/index.php?title=Exception_Handling).  Removing these
+# tables saves space and has not caused any readily-apparent functional
+# changes.
+#
+# Synchronize the unwind table options here with the CFLAGS and CXXFLAGS in
+# ./bsp/libc/build_newlib.sh.
+CFLAGS += -fno-stack-protector -fno-asynchronous-unwind-tables -fno-unwind-tables -nostdinc -I$(LIBC)/include -isystem $(LIBGCC_PATH)/include -isystem $(LIBGCC_PATH)/include-fixed
 LDFLAGS += -nostdlib -L$(LIBC)/lib -L$(LIBGCC_PATH)/32
 
 TARGET_LIBFILES += -lm -lc -lgcc
